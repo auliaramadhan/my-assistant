@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:my_assistant/utils/widget.dart';
 
 import '../../../theme/style.dart';
 import '../../../utils/auto_router.dart';
@@ -48,9 +49,10 @@ class _RegistrasiAboutScreenState extends State<RegistrasiAboutScreen> {
       key: formKey,
       child: ListView(
         children: [
-          const StepperRegistration(numberStep: 3, complete: 2),
+          const StepperRegistration(numberStep: 3, complete: 3),
+          const ExtraHeight(),
           Text('Tentang Anda', style: textStyle.titleLarge),
-          const ExtraHeight(16),
+          const ExtraHeight(),
           Text('Daerah Tinggal Sekarang *', style: textStyle.bodyLarge),
           const ExtraHeight(8),
           TextFormField(
@@ -64,18 +66,23 @@ class _RegistrasiAboutScreenState extends State<RegistrasiAboutScreen> {
           const ExtraHeight(16),
           Text('Gaji yang Diinginkan ', style: textStyle.bodyLarge),
           const ExtraHeight(8),
-          // Row(
-          //   children: [
-          //     TextFormField(
-          //       controller: gajiMinCtrl,
-          //       decoration: AppStyle.inputTextBorder.copyWith(hintText: 'Minimum', prefixText: 'Rp'),
-          //     ),
-          //     TextFormField(
-          //       controller: gajiMaxCtrl,
-          //       decoration: AppStyle.inputTextBorder.copyWith(hintText: 'Maksimum', prefixText: 'Rp'),
-          //     ),
-          //   ],
-          // ),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: gajiMinCtrl,
+                  decoration: AppStyle.inputTextBorder.copyWith(hintText: 'Minimum', prefixIcon: WidgetApp.prefixField('Rp')),
+                ),
+              ),
+              const ExtraWidth(8),
+              Expanded(
+                child: TextFormField(
+                  controller: gajiMaxCtrl,
+                  decoration: AppStyle.inputTextBorder.copyWith(hintText: 'Maksimum', prefixIcon: WidgetApp.prefixField('Rp')),
+                ),
+              ),
+            ],
+          ),
           const ExtraHeight(16),
           Text('Keahlian ', style: textStyle.bodyLarge),
           const ExtraHeight(8),

@@ -143,6 +143,9 @@ class _RegistrasInformasiScreen extends State<RegistrasInformasiScreen> {
           TextFormField(
             validator: Utils.validatorForm("Tanggal Lahir harap diisi"),
             controller: tglLahirCtrl,
+            onTap: () {
+              showDatePicker(context: context, initialDate: DateTime(1980), firstDate: DateTime(2020), lastDate: DateTime(2023));
+            },
             decoration: AppStyle.inputTextBorder.copyWith(
               hintText: 'HH/BB/TT',
             ),

@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final emailCtrl = TextEditingController();
   final passCtrl = TextEditingController();
 
-  var showPass = false;
+  var hidePass = false;
 
   @override
   void initState() {
@@ -40,10 +40,10 @@ class _LoginScreenState extends State<LoginScreen> {
   buttonVisibilty() => IconButton(
       onPressed: () {
         setState(() {
-          showPass = !showPass;
+          hidePass = !hidePass;
         });
       },
-      icon: Icon(showPass ? Icons.visibility : Icons.visibility_off_outlined));
+      icon: Icon(hidePass ? Icons.visibility : Icons.visibility_off_outlined));
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,8 @@ class _LoginScreenState extends State<LoginScreen> {
           TextFormField(
             validator: Utils.validatorForm("Password harap diisi"),
             controller: passCtrl,
-            obscureText: true,
+            obscureText: hidePass,
+            obscuringCharacter: '●',
             decoration: AppStyle.inputTextBorder.copyWith(
               hintText: 'Password',
               suffixIcon: buttonVisibilty(),

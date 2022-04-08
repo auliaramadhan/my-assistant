@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:my_assistant/theme/images.dart';
 import 'package:my_assistant/theme/style.dart';
 import 'package:my_assistant/utils/auto_router.dart';
+import 'package:my_assistant/utils/utils.dart';
 import 'package:my_assistant/widget/buttons/button_primary.dart';
 import 'package:my_assistant/widget/spacing.dart';
 
@@ -43,13 +44,10 @@ class _ForgotPasswordPageState extends State<ResetPasswordPage> {
             Text('Password', style: textStyle.bodyLarge),
             const ExtraHeight(8),
             TextFormField(
-              validator: (value) {
-                if ((value ?? '').isEmpty) {
-                  return "Password harap diisi";
-                }
-              },
+              validator: Utils.validatorForm("Password harap diisi"),
               controller: passCtrl,
               obscureText: showPass,
+              obscuringCharacter: '●',
               decoration: AppStyle.inputTextBorder.copyWith(
                 hintText: 'Password',
                 suffixIcon: buttonVisibilty(showPass, () => showPass = !showPass),
@@ -59,13 +57,10 @@ class _ForgotPasswordPageState extends State<ResetPasswordPage> {
             Text('Ulangi Password', style: textStyle.bodyLarge),
             const ExtraHeight(8),
             TextFormField(
-              validator: (value) {
-                if ((value ?? '').isEmpty) {
-                  return "Password harap diisi";
-                }
-              },
+              validator: Utils.validatorForm("Password harap diisi"),
               controller: repassCtrl,
               obscureText: showrePass,
+              obscuringCharacter: '●',
               decoration: AppStyle.inputTextBorder.copyWith(
                 hintText: 'Password',
                 suffixIcon: buttonVisibilty(showrePass, () => showrePass = !showrePass),
