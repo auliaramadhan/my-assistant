@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-import '../../../theme/images.dart';
 import '../../../theme/style.dart';
 import '../../../utils/auto_router.dart';
 import '../../../utils/utils.dart';

@@ -54,7 +54,8 @@ class _LoginScreenState extends State<LoginScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         // shrinkWrap: true,
         children: [
-          SvgPicture.asset(IconsApp.logoApp, alignment: Alignment.centerLeft, height: 100),
+          SvgPicture.asset(IconsApp.logoApp,
+              alignment: Alignment.centerLeft, height: 100),
           Text('Welcome', style: textStyle.titleLarge),
           Text('Silahkan masuk kembali', style: textStyle.subtitle1),
           const ExtraHeight(16),
@@ -82,7 +83,8 @@ class _LoginScreenState extends State<LoginScreen> {
           const ExtraHeight(8),
           GestureDetector(
             onTap: () => context.pushRoute(const ForgotPasaRoute()),
-            child: const Text("Lupa Password ? ", style: AppStyle.textWarning, textAlign: TextAlign.right),
+            child: const Text("Lupa Password ? ",
+                style: AppStyle.textWarning, textAlign: TextAlign.right),
           ),
           const ExtraHeight(16),
           ButtonPrimary(onPressed: () {}, text: "Masuk"),

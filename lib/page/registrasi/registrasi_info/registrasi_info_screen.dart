@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_assistant/model/wilayah_response.dart';
+import 'package:my_assistant/provider/wilayah/wilayah_provider.dart';
 
 import '../../../theme/colors.dart';
-import '../../../theme/images.dart';
 import '../../../theme/style.dart';
 import '../../../utils/auto_router.dart';
 import '../../../utils/utils.dart';
@@ -12,22 +14,22 @@ import '../../../widget/modal_radio.dart';
 import '../../../widget/spacing.dart';
 import '../../../widget/stepper_registration.dart';
 
-class RegistrasInformasiScreen extends StatefulWidget {
+class RegistrasInformasiScreen extends ConsumerStatefulWidget {
   const RegistrasInformasiScreen({Key? key}) : super(key: key);
 
   @override
-  State<RegistrasInformasiScreen> createState() => _RegistrasInformasiScreen();
+  ConsumerState<RegistrasInformasiScreen> createState() => _RegistrasInformasiScreen();
 }
 
 const jenisId = ['KTP', 'SIM', 'Passport'];
 
-class _RegistrasInformasiScreen extends State<RegistrasInformasiScreen> {
+class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> {
   final GlobalKey<FormState> formKey = GlobalKey();
   final namaCtrl = TextEditingController();
   final tempatLahirCtrl = TextEditingController();
   final tglLahirCtrl = TextEditingController();
   final alamatCtrl = TextEditingController();
-  final kotaCtrl = TextEditingController();
+  final kabupatenCtrl = TextEditingController();
   final kecamatanCtrl = TextEditingController();
   final statusCtrl = TextEditingController();
   final genderCtrl = TextEditingController();
@@ -35,7 +37,7 @@ class _RegistrasInformasiScreen extends State<RegistrasInformasiScreen> {
   final kartuIDCtrl = TextEditingController();
   final nomorIDCtrl = TextEditingController();
 
-  String? selected;
+  String? selectedIdentitas;
 
   @override
   void dispose() {
@@ -43,7 +45,7 @@ class _RegistrasInformasiScreen extends State<RegistrasInformasiScreen> {
     tempatLahirCtrl.dispose();
     tglLahirCtrl.dispose();
     alamatCtrl.dispose();
-    kotaCtrl.dispose();
+    kabupatenCtrl.dispose();
     kecamatanCtrl.dispose();
     statusCtrl.dispose();
     genderCtrl.dispose();
@@ -74,23 +76,7 @@ class _RegistrasInformasiScreen extends State<RegistrasInformasiScreen> {
             decoration: AppStyle.inputTextBorder.copyWith(
               hintText: 'Pilih jenis Identitas',
               suffixIcon: IconButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    shape: AppStyle.bottomSheetBorder,
-                    builder: (_) => StatefulBuilder(
-                      builder: (context, setState) => ModalRadio<String?>(
-                          title: "Pilih Jenis Identitas",
-                          listData: jenisId,
-                          listText: jenisId,
-                          selected: selected,
-                          onChanged: (value) {
-                            setState(() => selected = value!);
-                            jenisIDCtrl.text = value!;
-                          }),
-                    ),
-                  );
-                },
+                onPressed: _showModalIdentitas,
                 icon: const Icon(Icons.arrow_drop_down_outlined),
               ),
             ),
@@ -117,7 +103,8 @@ class _RegistrasInformasiScreen extends State<RegistrasInformasiScreen> {
               hintText: 'Masukkan Nomor Identitas',
             ),
           ),
-          Text('Pastikan nomor yang dimasukkan sama dengan jenis identitas yang sudah dipilih', style: textStyle.caption),
+          Text('Pastikan nomor yang dimasukkan sama dengan jenis identitas yang sudah dipilih',
+              style: textStyle.caption),
           Text('Nama Lengkap *', style: textStyle.bodyLarge),
           const ExtraHeight(8),
           TextFormField(
@@ -162,11 +149,11 @@ class _RegistrasInformasiScreen extends State<RegistrasInformasiScreen> {
           const ExtraHeight(8),
           TextFormField(
             validator: Utils.validatorForm("Kota harap diisi"),
-            controller: kotaCtrl,
+            controller: kabupatenCtrl,
             readOnly: true,
             decoration: AppStyle.inputTextBorder.copyWith(
-              hintText: 'Pilih Kota',
-              suffixIcon: IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_drop_down_outlined)),
+              hintText: 'Pilih kabupaten',
+              suffixIcon: IconButton(onPressed: _showModalKabupaten, icon: const Icon(Icons.arrow_drop_down_outlined)),
             ),
           ),
           const ExtraHeight(16),
@@ -178,7 +165,7 @@ class _RegistrasInformasiScreen extends State<RegistrasInformasiScreen> {
             readOnly: true,
             decoration: AppStyle.inputTextBorder.copyWith(
               hintText: 'Pilih Kecamatan',
-              suffixIcon: IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_drop_down_outlined)),
+              suffixIcon: IconButton(onPressed: _showModalKecamatan, icon: const Icon(Icons.arrow_drop_down_outlined)),
             ),
           ),
           const ExtraHeight(16),
@@ -223,6 +210,93 @@ class _RegistrasInformasiScreen extends State<RegistrasInformasiScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showModalIdentitas() {
+    showModalBottomSheet(
+      context: context,
+      shape: AppStyle.bottomSheetBorder,
+      builder: (_) => StatefulBuilder(
+        builder: (context, setState) => ModalRadio<String?>(
+            title: "Pilih Jenis Identitas",
+            listData: jenisId,
+            listText: jenisId,
+            selected: selectedIdentitas,
+            onChanged: (value) {
+              setState(() => selectedIdentitas = value!);
+              jenisIDCtrl.text = value!;
+            }),
+      ),
+    );
+  }
+
+  void _showModalKecamatan() {
+    // ref.refresh(kecamatanListProvider);
+    showModalBottomSheet(
+      context: context,
+      shape: AppStyle.bottomSheetBorder,
+      builder: (_) => StatefulBuilder(builder: (context, setState) {
+        return Consumer(
+          builder: (context, ref, child) {
+            final kabupaten = ref.watch(kecamatanListProvider);
+            return kabupaten.when(
+              error: (error, stackTrace) {
+                return Text('Error');
+              },
+              data: (List<WilayahData> data) {
+                return ModalRadio<WilayahData?>(
+                    title: "Pilih Kecamatan",
+                    listData: data,
+                    listText: data.map((e) => e.name).toList(),
+                    selected: ref.watch(selectedKecamatanProvider),
+                    onChanged: (value) {
+                      kecamatanCtrl.text = value?.name ?? '';
+                      ref.read(selectedKecamatanProvider.notifier).state = value;
+                    });
+              },
+              loading: () {
+                return const Center(child: CircularProgressIndicator());
+              },
+            );
+          },
+        );
+      }),
+    );
+  }
+
+  void _showModalKabupaten() {
+    // ref.refresh(kabupatenListProvider);
+    showModalBottomSheet(
+      context: context,
+      shape: AppStyle.bottomSheetBorder,
+      builder: (_) => StatefulBuilder(builder: (context, setState) {
+        return Consumer(
+          builder: (context, ref, child) {
+            final kabupaten = ref.watch(kabupatenListProvider);
+            return kabupaten.when(
+              error: (error, stackTrace) {
+                return const Center(child: Text('asdas'));
+                // return const SizedBox();
+              },
+              data: (List<WilayahData> data) {
+                return ModalRadio<WilayahData?>(
+                    title: "Pilih Kota / Kabupaten",
+                    listData: data,
+                    listText: data.map((e) => e.name).toList(),
+                    selected: ref.watch(selectedKabupatenProvider),
+                    onChanged: (value) {
+                      kabupatenCtrl.text = value?.name ?? '';
+                      ref.read(selectedKabupatenProvider.notifier).state = value;
+                    });
+              },
+              loading: () {
+                return const Center(child: CircularProgressIndicator());
+              },
+            );
+          },
+        );
+      }),
     );
   }
 }

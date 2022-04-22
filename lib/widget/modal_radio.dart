@@ -24,10 +24,10 @@ class ModalRadio<T> extends StatelessWidget {
     final textStyle = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.only(top: 24),
-      child: Column(
+      child: ListView(
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (title != null) Text(title!, style: textStyle.titleLarge),
+          if (title != null) Center(child: Text(title!, style: textStyle.titleLarge)),
           const ExtraHeight(),
           ...List.generate(
             listData.length,
