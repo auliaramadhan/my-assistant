@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_assistant/widget/radio_list.dart';
-import 'package:my_assistant/widget/spacing.dart';
+import 'radio_list.dart';
+import 'spacing.dart';
 
 class ModalRadio<T> extends StatelessWidget {
   final List<T> listData;

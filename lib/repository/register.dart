@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:my_assistant/model/register_request.dart';
-import 'package:my_assistant/utils/apiurl.dart';
+import '../model/register_request.dart';
+import '../utils/apiurl.dart';
 
 // abstract class IRegisterRepository {
 //   Future<dynamic> registerAssistant(RegisterRequest request);

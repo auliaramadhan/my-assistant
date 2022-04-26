@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_assistant/theme/images.dart';
+
+import '../theme/images.dart';
 
 class AvatarUser extends StatelessWidget {
   final String image;

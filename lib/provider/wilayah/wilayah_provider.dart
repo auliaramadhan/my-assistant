@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_assistant/model/wilayah_response.dart';
-import 'package:my_assistant/repository/wilayah.dart';
+import '../../model/wilayah_response.dart';
+import '../../repository/wilayah.dart';
 
 final selectedProvinsiProvider = StateProvider<WilayahData?>((_) {
   return null;
@@ -17,32 +17,29 @@ final selectedKelurahanProvider = StateProvider<WilayahData?>((_) {
   return null;
 });
 
-final provinsiListProvider = FutureProvider<List<WilayahData>>((ref) {
+final provinsiListProvider = FutureProvider<List<WilayahData> >((ref) {
   return ref.read(wilayahRepoProvider).fetchListProvinsi();
 });
 
-final kabupatenListProvider = FutureProvider<List<WilayahData>>((ref) {
-  final provinsi = ref.watch(selectedProvinsiProvider);
+final kabupatenListProvider = FutureProvider.autoDispose.family<List<WilayahData>,WilayahData? >((ref,data) {
   return ref.read(wilayahRepoProvider).fetchListKabupaten('31');
-  if (provinsi != null) {
+  if (data != null) {
   } else {
     return [];
   }
 });
 
-final kecamatanListProvider = FutureProvider<List<WilayahData>>((ref) {
-  final kabupaten = ref.watch(selectedKabupatenProvider);
-  if (kabupaten != null) {
-    return ref.read(wilayahRepoProvider).fetchListKecamatan(kabupaten.id);
+final kecamatanListProvider = FutureProvider.autoDispose.family<List<WilayahData>,WilayahData? >((ref,data) {
+  if (data != null) {
+    return ref.read(wilayahRepoProvider).fetchListKecamatan(data.id);
   } else {
     return [];
   }
 });
 
-final kelurahanListProvider = FutureProvider<List<WilayahData>>((ref) {
-  final kecamatan = ref.watch(selectedKecamatanProvider);
-  if (kecamatan != null) {
-    return ref.read(wilayahRepoProvider).fetchListKelurahan(kecamatan.id);
+final kelurahanListProvider = FutureProvider.autoDispose.family<List<WilayahData>,WilayahData? >((ref,data) {
+  if (data != null) {
+    return ref.read(wilayahRepoProvider).fetchListKelurahan(data.id);
   } else {
     return [];
   }
@@ -63,18 +60,25 @@ class WilayahController {
   final Reader _read;
   WilayahController(this._read);
 
-  void changeProvinsi() {
+  void changeProvinsi(WilayahData value) {
+    
+    _read(selectedProvinsiProvider.notifier).state = value;
     _read(selectedKabupatenProvider.notifier).state = null;
     _read(selectedKecamatanProvider.notifier).state = null;
     _read(selectedKelurahanProvider.notifier).state = null;
   }
 
-  void changeKabupaten() {
+  void changeKabupaten(WilayahData value) {
+    _read(selectedKabupatenProvider.notifier).state = value;
     _read(selectedKecamatanProvider.notifier).state = null;
     _read(selectedKelurahanProvider.notifier).state = null;
   }
 
-  void changeKecamatan() {
+  void changeKecamatan(WilayahData value) {
+    _read(selectedKecamatanProvider.notifier).state = value;
     _read(selectedKelurahanProvider.notifier).state = null;
+  }
+  void changeKelurahan(WilayahData value) {
+    _read(selectedKelurahanProvider.notifier).state = value;
   }
 }

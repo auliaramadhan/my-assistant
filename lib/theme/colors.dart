@@ -29,9 +29,12 @@ class ColorApp {
   // Fonts
   static const fontPrimary = Colors.black87;
   static const fontGrey = Color(0xB8C5C2ff);
-  static const fontDanger = Color(0xEB5757ff);
-  static const fontWaring = Color(0xFFFF8400);
-  static const fontGreen = Color(0x27AE60ff);
+  static const fontError = Color(0xEB5757ff);
+  static const fontInfo = Color(0xFFFF8400);
+  static const fontSuccess = Color(0x27AE60ff);
+
+  // Card
+  static const selectedCard = Color(0xFFACD5F9);
 
 
 

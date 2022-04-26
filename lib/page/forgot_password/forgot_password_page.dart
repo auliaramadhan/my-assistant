@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:my_assistant/page/forgot_password/reset_password_page.dart';
-import 'package:my_assistant/theme/images.dart';
-import 'package:my_assistant/theme/style.dart';
-import 'package:my_assistant/utils/auto_router.dart';
-import 'package:my_assistant/widget/buttons/button_primary.dart';
-import 'package:my_assistant/widget/spacing.dart';
+import 'reset_password_page.dart';
+import '../../theme/images.dart';
+import '../../theme/style.dart';
+import '../../utils/auto_router.dart';
+import '../../widget/buttons/button_primary.dart';
+import '../../widget/spacing.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({Key? key}) : super(key: key);

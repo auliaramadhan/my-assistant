@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'theme/colors.dart';
 
 import 'utils/auto_router.dart';
 
@@ -23,6 +23,14 @@ class MyApp extends StatelessWidget {
     final style = Theme.of(context);
     return MaterialApp.router(
       title: 'Flutter Demo',
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: const  [
+        Locale('en', 'US'), // English
+        Locale('id', 'ID'), // Thai
+      ],
       theme: ThemeData(
         // This is the theme of your application.
         //

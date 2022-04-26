@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_assistant/model/register_request.dart';
-import 'package:my_assistant/model/wilayah_response.dart';
-import 'package:my_assistant/utils/apiurl.dart';
+import '../model/register_request.dart';
+import '../model/wilayah_response.dart';
+import '../utils/apiurl.dart';
 
 final wilayahRepoProvider = Provider<WilayahRepository>((ref) {
   return WilayahRepository();

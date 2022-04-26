@@ -1,8 +1,8 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_assistant/model/register_request.dart';
-import 'package:my_assistant/provider/register/register_state.dart';
-import 'package:my_assistant/repository/register.dart';
+import '../../model/register_request.dart';
+import 'register_state.dart';
+import '../../repository/register.dart';
 
 final registerReqDataProv = StateProvider<RegisterRequest>((ref) {
   return RegisterRequest();

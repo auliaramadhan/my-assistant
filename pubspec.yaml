@@ -41,6 +41,11 @@ dependencies:
   keyboard_dismisser: ^2.0.1
   dio: ^4.0.6
   flutter_riverpod: ^1.0.3
+  intl: ^0.17.0
+  flutter_localizations: 
+    sdk: flutter
+  image_picker: ^0.8.5
+  equatable: ^2.0.3
 
 dev_dependencies:
   flutter_test:

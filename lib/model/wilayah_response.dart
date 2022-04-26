@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
+
 class WilayahResponse {
   WilayahResponse({
     required this.code,
@@ -43,7 +45,7 @@ class WilayahResponse {
       };
 }
 
-class WilayahData {
+class WilayahData extends Equatable {
   WilayahData({
     required this.id,
     required this.name,
@@ -74,4 +76,8 @@ class WilayahData {
         "id": id,
         "name": name,
       };
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [id, name];
 }

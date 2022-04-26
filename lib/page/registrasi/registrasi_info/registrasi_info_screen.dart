@@ -1,8 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_assistant/model/wilayah_response.dart';
-import 'package:my_assistant/provider/wilayah/wilayah_provider.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../model/wilayah_response.dart';
+import '../../../provider/wilayah/wilayah_provider.dart';
+import '../../../theme/font.dart';
+import '../../../utils/date_time.dart';
 
 import '../../../theme/colors.dart';
 import '../../../theme/style.dart';
@@ -21,8 +24,6 @@ class RegistrasInformasiScreen extends ConsumerStatefulWidget {
   ConsumerState<RegistrasInformasiScreen> createState() => _RegistrasInformasiScreen();
 }
 
-const jenisId = ['KTP', 'SIM', 'Passport'];
-
 class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> {
   final GlobalKey<FormState> formKey = GlobalKey();
   final namaCtrl = TextEditingController();
@@ -38,6 +39,14 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
   final nomorIDCtrl = TextEditingController();
 
   String? selectedIdentitas;
+  String? selectedGender;
+  WilayahData? selectedProvinsi;
+  WilayahData? selectedKabupaten;
+  WilayahData? selectedKecamatan;
+
+  DateTime? tglLahirObject;
+
+  var selectedPerkawinan;
 
   @override
   void dispose() {
@@ -58,6 +67,8 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
   @override
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme;
+    final kabupatenProvider = ref.watch(kabupatenListProvider(WilayahData(id: '31', name: 'name')));
+    final kecamatanProvider = ref.watch(kecamatanListProvider(selectedKabupaten));
     return Form(
       key: formKey,
       child: ListView(
@@ -90,9 +101,16 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
             readOnly: true,
             decoration: AppStyle.inputTextBorder.copyWith(
               hintText: 'Silakan upload kartu identitas',
-              suffixIcon: WidgetApp.suffixField('upload', const TextStyle(color: ColorApp.warning)),
+              suffixIcon: GestureDetector(
+                onTap: () async {
+                  final image = await ImagePicker().pickImage(source: ImageSource.camera);
+                  kartuIDCtrl.text = image?.path ?? '';
+                },
+                child: WidgetApp.suffixField('upload', const TextStyle(color: ColorApp.info)),
+              ),
             ),
           ),
+          Text('Maks. 20MB dengan format jpeg', style: textStyle.caption),
           const ExtraHeight(8),
           Text('Nomor Identitas *', style: textStyle.bodyLarge),
           const ExtraHeight(8),
@@ -129,9 +147,20 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
           const ExtraHeight(8),
           TextFormField(
             validator: Utils.validatorForm("Tanggal Lahir harap diisi"),
+            readOnly: true,
             controller: tglLahirCtrl,
             onTap: () {
-              showDatePicker(context: context, initialDate: DateTime(1980), firstDate: DateTime(2020), lastDate: DateTime(2023));
+              showDatePicker(
+                context: context,
+                locale: const Locale('id', 'ID'),
+                initialDatePickerMode: DatePickerMode.year,
+                initialDate: DateTime(2000),
+                firstDate: DateTime(1970),
+                lastDate: DateTime.now().subtract(const Duration(days: 365 * 10)),
+              ).then((date) {
+                tglLahirCtrl.text = DatetimeApp.datetoString(date) ?? '';
+                tglLahirObject = date;
+              });
             },
             decoration: AppStyle.inputTextBorder.copyWith(
               hintText: 'HH/BB/TT',
@@ -153,10 +182,11 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
           TextFormField(
             validator: Utils.validatorForm("Kota harap diisi"),
             controller: kabupatenCtrl,
+            onTap: _showModalKabupaten,
             readOnly: true,
             decoration: AppStyle.inputTextBorder.copyWith(
-              hintText: 'Pilih kabupaten',
-              suffixIcon: IconButton(onPressed: _showModalKabupaten, icon: const Icon(Icons.arrow_drop_down_outlined)),
+              hintText: 'Pilih Kota',
+              suffixIcon: const Icon(Icons.arrow_drop_down_outlined),
             ),
           ),
           const ExtraHeight(16),
@@ -166,9 +196,11 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
             validator: Utils.validatorForm("Kecamatan harap diisi"),
             controller: kecamatanCtrl,
             readOnly: true,
+            onTap: _showModalKecamatan,
             decoration: AppStyle.inputTextBorder.copyWith(
               hintText: 'Pilih Kecamatan',
-              suffixIcon: IconButton(onPressed: _showModalKecamatan, icon: const Icon(Icons.arrow_drop_down_outlined)),
+              fillColor: Colors.grey.shade300,
+              suffixIcon: const Icon(Icons.arrow_drop_down_outlined),
             ),
           ),
           const ExtraHeight(16),
@@ -178,14 +210,34 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
             validator: Utils.validatorForm("Status Perkawinan harap diisi"),
             controller: statusCtrl,
             readOnly: true,
+            onTap: _showModalPerkawinan,
             decoration: AppStyle.inputTextBorder.copyWith(
               hintText: 'Pilih Status Perkawinan',
-              suffixIcon: IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_drop_down_outlined)),
+              suffixIcon: const Icon(Icons.arrow_drop_down_outlined),
             ),
           ),
           const ExtraHeight(16),
           Text('Jenis Kelamin *', style: textStyle.bodyLarge),
+          Row(
+            children: listGender
+                .map(
+                  (value) => RadioListTile(
+                    value: value,
+                    groupValue: selectedGender,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedGender = value as String?;
+                      });
+                    },
+                    title: Text(value),
+                    shape: AppStyle.tileBorder,
+                  ),
+                )
+                .toList(),
+          ),
+          const Text("Jenis Kelamin harap diisi", style: AppFont.body14Error),
           const ExtraHeight(8),
+          /* -----------------
           TextFormField(
             validator: Utils.validatorForm("Jenis Kelamin harap diisi"),
             controller: genderCtrl,
@@ -198,12 +250,13 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
                     genderCtrl.text = value;
                   },
                   itemBuilder: (BuildContext context) {
-                    return ['Pria', 'Wanita'].map<PopupMenuItem<String>>((String value) {
+                    return listGender.map<PopupMenuItem<String>>((String value) {
                       return PopupMenuItem(child: Text(value), value: value);
                     }).toList();
                   },
                 )),
           ),
+          ----------- */
           const ExtraHeight(16),
           ButtonPrimary(
             onPressed: () {
@@ -234,6 +287,24 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
     );
   }
 
+  void _showModalPerkawinan() {
+    showModalBottomSheet(
+      context: context,
+      shape: AppStyle.bottomSheetBorder,
+      builder: (_) => StatefulBuilder(
+        builder: (context, setState) => ModalRadio<String?>(
+            title: "Pilih Jenis Perkawinan",
+            listData: jenisPerkawinan,
+            listText: jenisPerkawinan,
+            selected: selectedPerkawinan,
+            onChanged: (value) {
+              setState(() => selectedPerkawinan = value!);
+              statusCtrl.text = value!;
+            }),
+      ),
+    );
+  }
+
   void _showModalKecamatan() {
     // ref.refresh(kecamatanListProvider);
     showModalBottomSheet(
@@ -242,7 +313,8 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
       builder: (_) => StatefulBuilder(builder: (context, setState) {
         return Consumer(
           builder: (context, ref, child) {
-            final kabupaten = ref.watch(kecamatanListProvider);
+            // final kabupaten = ref.watch(kecamatanListProvider);
+            final kabupaten = ref.watch(kecamatanListProvider(selectedKabupaten));
             return kabupaten.when(
               error: (error, stackTrace) {
                 return Text('Error');
@@ -252,10 +324,13 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
                     title: "Pilih Kecamatan",
                     listData: data,
                     listText: data.map((e) => e.name).toList(),
-                    selected: ref.watch(selectedKecamatanProvider),
+                    // selected: ref.watch(selectedKecamatanProvider),
+                    selected: selectedKecamatan,
                     onChanged: (value) {
                       kecamatanCtrl.text = value?.name ?? '';
-                      ref.read(selectedKecamatanProvider.notifier).state = value;
+                      setState(() {
+                        selectedKecamatan = value;
+                      });
                     });
               },
               loading: () {
@@ -276,7 +351,8 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
       builder: (_) => StatefulBuilder(builder: (context, setState) {
         return Consumer(
           builder: (context, ref, child) {
-            final kabupaten = ref.watch(kabupatenListProvider);
+            // final kabupaten = ref.watch(kabupatenListProvider);
+            final kabupaten = ref.watch(kabupatenListProvider(WilayahData(id: '31', name: 'name')));
             return kabupaten.when(
               error: (error, stackTrace) {
                 return const Center(child: Text('asdas'));
@@ -287,10 +363,47 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
                     title: "Pilih Kota / Kabupaten",
                     listData: data,
                     listText: data.map((e) => e.name).toList(),
-                    selected: ref.watch(selectedKabupatenProvider),
+                    selected: selectedKabupaten,
                     onChanged: (value) {
                       kabupatenCtrl.text = value?.name ?? '';
-                      ref.read(selectedKabupatenProvider.notifier).state = value;
+                      setState(() {
+                        selectedKabupaten = value;
+                      });
+                    });
+              },
+              loading: () {
+                return const Center(child: CircularProgressIndicator());
+              },
+            );
+          },
+        );
+      }),
+    );
+  }
+
+  void _showModalProvinsi() {
+    // ref.refresh(kabupatenListProvider);
+    showModalBottomSheet(
+      context: context,
+      shape: AppStyle.bottomSheetBorder,
+      builder: (_) => StatefulBuilder(builder: (context, setState) {
+        return Consumer(
+          builder: (context, ref, child) {
+            final kabupaten = ref.watch(provinsiListProvider);
+            return kabupaten.when(
+              error: (error, stackTrace) {
+                return const Center(child: Text('asdas'));
+                // return const SizedBox();
+              },
+              data: (List<WilayahData> data) {
+                return ModalRadio<WilayahData?>(
+                    title: "Pilih Provinsi",
+                    listData: data,
+                    listText: data.map((e) => e.name).toList(),
+                    selected: ref.watch(selectedProvinsiProvider),
+                    onChanged: (value) {
+                      kabupatenCtrl.text = value?.name ?? '';
+                      ref.read(wilayahControllerProvider).changeProvinsi(value!);
                     });
               },
               loading: () {
@@ -303,3 +416,7 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
     );
   }
 }
+
+const listGender = ['Pria', 'Wanita'];
+const jenisId = ['KTP', 'SIM', 'Passport'];
+const jenisPerkawinan = ['Lajang', 'Kawin', 'Cerai Hidup', 'Cerai Mati'];
