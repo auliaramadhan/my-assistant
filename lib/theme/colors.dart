@@ -28,8 +28,8 @@ class ColorApp {
 
   // Fonts
   static const fontPrimary = Colors.black87;
-  static const fontGrey = Color(0xB8C5C2ff);
-  static const fontError = Color(0xEB5757ff);
+  static const fontGrey = Color(0xFFB8C5C2);
+  static const fontError = Color(0xFFEB5757);
   static const fontInfo = Color(0xFFFF8400);
   static const fontSuccess = Color(0x27AE60ff);
 

@@ -22,7 +22,11 @@ final provinsiListProvider = FutureProvider<List<WilayahData> >((ref) {
 });
 
 final kabupatenListProvider = FutureProvider.autoDispose.family<List<WilayahData>,WilayahData? >((ref,data) {
+  ref.onDispose(() {
+    print('wilayah kabupaten di dispose');
+  });
   return ref.read(wilayahRepoProvider).fetchListKabupaten('31');
+  
   if (data != null) {
   } else {
     return [];
@@ -30,6 +34,9 @@ final kabupatenListProvider = FutureProvider.autoDispose.family<List<WilayahData
 });
 
 final kecamatanListProvider = FutureProvider.autoDispose.family<List<WilayahData>,WilayahData? >((ref,data) {
+  ref.onDispose(() {
+    print('wilayah  di dispose');
+  });
   if (data != null) {
     return ref.read(wilayahRepoProvider).fetchListKecamatan(data.id);
   } else {

@@ -22,8 +22,8 @@ class AppStyle {
   );
 
   static const tileBorder = RoundedRectangleBorder(
-    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-    side: BorderSide(color: ColorApp.primary, width: 1),
+    borderRadius: BorderRadius.all(Radius.circular(4)),
+    side: BorderSide(color: ColorApp.divider, width: 1),
   );
 
   static const textWarning = TextStyle(color: ColorApp.fontInfo, fontSize: 14, fontWeight: FontWeight.bold);

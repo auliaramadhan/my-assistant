@@ -67,8 +67,8 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
   @override
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme;
-    final kabupatenProvider = ref.watch(kabupatenListProvider(WilayahData(id: '31', name: 'name')));
-    final kecamatanProvider = ref.watch(kecamatanListProvider(selectedKabupaten));
+    final kabupatenProvider = ref.watch(kabupatenListProvider(WilayahData(id: '31', name: 'name')).future);
+    final kecamatanProvider = ref.watch(kecamatanListProvider(selectedKabupaten).future);
     return Form(
       key: formKey,
       child: ListView(
@@ -182,7 +182,7 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
           TextFormField(
             validator: Utils.validatorForm("Kota harap diisi"),
             controller: kabupatenCtrl,
-            onTap: _showModalKabupaten,
+            onTap: () => _showModalKabupaten(kabupatenProvider),
             readOnly: true,
             decoration: AppStyle.inputTextBorder.copyWith(
               hintText: 'Pilih Kota',
@@ -196,10 +196,10 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
             validator: Utils.validatorForm("Kecamatan harap diisi"),
             controller: kecamatanCtrl,
             readOnly: true,
-            onTap: _showModalKecamatan,
+            onTap: () => _showModalKecamatan(kecamatanProvider),
             decoration: AppStyle.inputTextBorder.copyWith(
               hintText: 'Pilih Kecamatan',
-              fillColor: Colors.grey.shade300,
+              fillColor: selectedKabupaten == null ? Colors.grey.shade300 : null,
               suffixIcon: const Icon(Icons.arrow_drop_down_outlined),
             ),
           ),
@@ -221,16 +221,23 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
           Row(
             children: listGender
                 .map(
-                  (value) => RadioListTile(
-                    value: value,
-                    groupValue: selectedGender,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedGender = value as String?;
-                      });
-                    },
-                    title: Text(value),
-                    shape: AppStyle.tileBorder,
+                  (value) => Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: RadioListTile(
+                        value: value,
+                        groupValue: selectedGender,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedGender = value as String?;
+                          });
+                        },
+                        selectedTileColor: Colors.blue,
+                        tileColor: Colors.white,
+                        title: Text(value),
+                        // shape: AppStyle.tileBorder,
+                      ),
+                    ),
                   ),
                 )
                 .toList(),
@@ -305,76 +312,68 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
     );
   }
 
-  void _showModalKecamatan() {
+  void _showModalKecamatan(Future<List<WilayahData>> kabupaten) {
     // ref.refresh(kecamatanListProvider);
     showModalBottomSheet(
       context: context,
       shape: AppStyle.bottomSheetBorder,
       builder: (_) => StatefulBuilder(builder: (context, setState) {
-        return Consumer(
-          builder: (context, ref, child) {
-            // final kabupaten = ref.watch(kecamatanListProvider);
-            final kabupaten = ref.watch(kecamatanListProvider(selectedKabupaten));
-            return kabupaten.when(
-              error: (error, stackTrace) {
-                return Text('Error');
-              },
-              data: (List<WilayahData> data) {
-                return ModalRadio<WilayahData?>(
-                    title: "Pilih Kecamatan",
-                    listData: data,
-                    listText: data.map((e) => e.name).toList(),
-                    // selected: ref.watch(selectedKecamatanProvider),
-                    selected: selectedKecamatan,
-                    onChanged: (value) {
-                      kecamatanCtrl.text = value?.name ?? '';
-                      setState(() {
-                        selectedKecamatan = value;
-                      });
+        return FutureBuilder<List<WilayahData>>(
+          future: kabupaten,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              //Build you UI
+              final data = snapshot.data;
+              return ModalRadio<WilayahData?>(
+                  title: "Pilih Kecamatan",
+                  listData: data!,
+                  listText: data.map((e) => e.name).toList(),
+                  // selected: ref.watch(selectedKecamatanProvider),
+                  selected: selectedKecamatan,
+                  onChanged: (value) {
+                    kecamatanCtrl.text = value?.name ?? '';
+                    setState(() {
+                      selectedKecamatan = value;
                     });
-              },
-              loading: () {
-                return const Center(child: CircularProgressIndicator());
-              },
-            );
+                    this.setState(() {});
+                  });
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
           },
         );
       }),
     );
   }
 
-  void _showModalKabupaten() {
+  void _showModalKabupaten(Future<List<WilayahData>> kabupaten) {
     // ref.refresh(kabupatenListProvider);
     showModalBottomSheet(
       context: context,
       shape: AppStyle.bottomSheetBorder,
       builder: (_) => StatefulBuilder(builder: (context, setState) {
-        return Consumer(
-          builder: (context, ref, child) {
-            // final kabupaten = ref.watch(kabupatenListProvider);
-            final kabupaten = ref.watch(kabupatenListProvider(WilayahData(id: '31', name: 'name')));
-            return kabupaten.when(
-              error: (error, stackTrace) {
-                return const Center(child: Text('asdas'));
-                // return const SizedBox();
-              },
-              data: (List<WilayahData> data) {
-                return ModalRadio<WilayahData?>(
-                    title: "Pilih Kota / Kabupaten",
-                    listData: data,
-                    listText: data.map((e) => e.name).toList(),
-                    selected: selectedKabupaten,
-                    onChanged: (value) {
-                      kabupatenCtrl.text = value?.name ?? '';
-                      setState(() {
-                        selectedKabupaten = value;
-                      });
+        return FutureBuilder<List<WilayahData>>(
+          future: kabupaten,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              //Build you UI
+              final data = snapshot.data;
+              return ModalRadio<WilayahData?>(
+                  title: "Pilih Kecamatan",
+                  listData: data!,
+                  listText: data.map((e) => e.name).toList(),
+                  // selected: ref.watch(selectedKecamatanProvider),
+                  selected: selectedKabupaten,
+                  onChanged: (value) {
+                    kabupatenCtrl.text = value?.name ?? '';
+                    setState(() {
+                      selectedKabupaten = value;
                     });
-              },
-              loading: () {
-                return const Center(child: CircularProgressIndicator());
-              },
-            );
+                    this.setState(() {});
+                  });
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
           },
         );
       }),

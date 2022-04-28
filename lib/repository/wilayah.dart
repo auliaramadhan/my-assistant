@@ -45,6 +45,7 @@ class WilayahRepository {
 
   Future<List<WilayahData>> fetchListKecamatan(String id_kabupaten) async {
     final data = {"api_key": ApiUrl.apiKey, "id_kabupaten": id_kabupaten};
+    await Future.delayed(Duration(seconds: 2));
     final response = await _dio.get(ApiUrl.kecamatan, queryParameters: data);
     if (response.statusCode == 200) {
       final wilayahresponse = WilayahResponse.fromMap(response.data);
