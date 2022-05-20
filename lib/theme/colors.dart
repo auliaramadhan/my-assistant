@@ -14,6 +14,7 @@ class ColorApp {
   static const accentColor = Color(0xFF69F0AE);
   static const secondary = Color(0xffEB5757);
   static const background = Color(0xE6FFFFFF);
+  static const background2 = Color(0xfffafafa);
   static const black = Color(0xff484441);
   static const bgInfo = Color(0xffFFF5E5);
   // static const black = Color(0xff4a4a4a);
@@ -32,6 +33,13 @@ class ColorApp {
   static const fontError = Color(0xFFEB5757);
   static const fontInfo = Color(0xFFFF8400);
   static const fontSuccess = Color(0x27AE60ff);
+
+  // Icon
+  static const iconPrimary = Colors.blue;
+  static const iconGrey = Color(0xFF898989);
+  static const iconError = Color(0xFFEB5757);
+  static const iconInfo = Color(0xFFFF8400);
+  static const iconSuccess = Color(0x27AE60ff);
 
   // Card
   static const selectedCard = Color(0xFFACD5F9);

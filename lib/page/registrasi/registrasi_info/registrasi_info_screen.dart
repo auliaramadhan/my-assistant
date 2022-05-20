@@ -2,14 +2,14 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../../../model/wilayah_response.dart';
 import '../../../provider/wilayah/wilayah_provider.dart';
-import '../../../theme/font.dart';
-import '../../../utils/date_time.dart';
-
 import '../../../theme/colors.dart';
+import '../../../theme/font.dart';
 import '../../../theme/style.dart';
 import '../../../utils/auto_router.dart';
+import '../../../utils/date_time.dart';
 import '../../../utils/utils.dart';
 import '../../../utils/widget.dart';
 import '../../../widget/buttons/button_primary.dart';
@@ -312,8 +312,10 @@ class _RegistrasInformasiScreen extends ConsumerState<RegistrasInformasiScreen> 
     );
   }
 
+
   void _showModalKecamatan(Future<List<WilayahData>> kabupaten) {
     // ref.refresh(kecamatanListProvider);
+    if (selectedKabupaten == null) return;
     showModalBottomSheet(
       context: context,
       shape: AppStyle.bottomSheetBorder,

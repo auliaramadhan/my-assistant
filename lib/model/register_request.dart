@@ -253,7 +253,7 @@ class Skill {
 
     factory Skill.fromMap(Map<String, dynamic> json) => Skill(
         skillId: json["skill_id"],
-        otherSkillName: json["other_skill_name"] == null ? null : json["other_skill_name"],
+        otherSkillName: json["other_skill_name"],
     );
 
     Map<String, dynamic> toMap() => {

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'colors.dart';
 
@@ -38,6 +39,8 @@ abstract class AppFont {
   static const bodyBoldError = TextStyle( fontSize: 12, color: ColorApp.fontError, fontWeight: FontWeight.w700);
   static const bodySemiBoldError = TextStyle( fontSize: 12, color: ColorApp.fontError, fontWeight: FontWeight.w600);
   static const bodyError = TextStyle( fontSize: 12, color: ColorApp.fontError, fontWeight: FontWeight.w400);
+
+  static const snackbarWhite = TextStyle( fontSize: 12, color: Colors.white, fontWeight: FontWeight.w400);
 
   // static form
 

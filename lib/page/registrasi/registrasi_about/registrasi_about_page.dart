@@ -15,6 +15,10 @@ class RegistrasiAboutPage extends StatelessWidget {
         automaticallyImplyLeading: false,
       ),
       body: KeyboardDismisser(
+        gestures: const [
+          GestureType.onTap,
+          GestureType.onPanDown,
+        ],
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: RegistrasiAboutScreen(),

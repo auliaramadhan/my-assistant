@@ -2,25 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:my_assistant/theme/colors.dart';
 
 
-class CustomRadioTile<T> extends StatelessWidget {
+class CustomCheckboxTile<T> extends StatelessWidget {
   final T value;
-  final T groupValue;
+  final bool selected;
   final String text;
-  final ValueChanged<T?> onChanged;
+  final ValueChanged<T> onChanged;
 
-  const CustomRadioTile({
+  const CustomCheckboxTile({
     required this.onChanged,
     required this.value,
-    required this.groupValue,
+    required this.selected,
     required this.text,
   });
 
   @override
   Widget build(BuildContext context) {
-    final selected = value == groupValue;
     return ListTile(
       title: Text(text),
-      selected: value == groupValue,
+      selected: selected,
       // selectedColor: Colors.blue[100],
       selectedTileColor: Colors.blue[100],
       onTap: () => onChanged(value),
@@ -28,8 +27,8 @@ class CustomRadioTile<T> extends StatelessWidget {
       //   child: const Icon(Icons.check_circle, color: Colors.blue),
       //   visible: selected,
       // ),
-      trailing: selected ? const Icon(Icons.radio_button_checked, color: Colors.blue) 
-      : const Icon(Icons.radio_button_unchecked, color: ColorApp.iconGrey) 
+      trailing: selected ? const Icon(Icons.check_box_outlined, color: Colors.blue) 
+      : const Icon(Icons.check_box_outline_blank_rounded, color: ColorApp.iconGrey) 
       ,
     );
   }

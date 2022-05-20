@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:my_assistant/theme/colors.dart';
-import 'radio_list.dart';
+
+import '../theme/colors.dart';
+import 'checkbox_list.dart';
 import 'spacing.dart';
 
-class ModalRadio<T> extends StatelessWidget {
+class ModalCheckbox<T extends CheckboxButtonSelected> extends StatefulWidget {
   final List<T> listData;
   final Iterable<String> listText;
-  final T selected;
   final String? title;
   final ValueChanged<T?> onChanged;
-  ModalRadio({
+  ModalCheckbox({
     Key? key,
     required this.listData,
     required this.listText,
-    required this.selected,
     required this.onChanged,
     this.title,
   }) : super(key: key) {
     assert(listData.length == listText.length);
   }
 
+  @override
+  State<ModalCheckbox<T>> createState() => _ModalCheckboxState<T>();
+}
+
+class _ModalCheckboxState<T extends CheckboxButtonSelected> extends State<ModalCheckbox<T>> {
   @override
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme;
@@ -28,10 +32,10 @@ class ModalRadio<T> extends StatelessWidget {
       child: ListView(
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (title != null) Center(child: Text(title!, style: textStyle.titleLarge)),
+          if (widget.title != null) Center(child: Text(widget.title!, style: textStyle.titleLarge)),
           const ExtraHeight(),
           ...List.generate(
-            listData.length,
+            widget.listData.length,
             (index) => Container(
               // padding: const EdgeInsets.only(bottom: 8),
               decoration: const BoxDecoration(
@@ -39,12 +43,22 @@ class ModalRadio<T> extends StatelessWidget {
                   top: BorderSide(color: ColorApp.divider, width: 1),
                 ),
               ),
-              child: CustomRadioTile(
-                  value: listData[index], groupValue: selected, onChanged: onChanged, text: listText.elementAt(index)),
+              child: CustomCheckboxTile<T>(
+                  onChanged: (value) {
+                    value.selected = !value.selected;
+                    setState(() {});
+                  },
+                  value: widget.listData[index],
+                  selected: widget.listData[index].selected,
+                  text: widget.listText.elementAt(index)),
             ),
           )
         ],
       ),
     );
   }
+}
+
+abstract class CheckboxButtonSelected {
+  bool selected = false;
 }
